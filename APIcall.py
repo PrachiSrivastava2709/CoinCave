@@ -1,5 +1,3 @@
-# make API call and get info ythrough python
-# ML setup
 import ml as model
 from datetime import datetime, timedelta
 from pandas import read_json, DataFrame
@@ -48,6 +46,7 @@ def get_date(now):
   else:
     month = int(mon) - 1
     month = str(month).zfill(2)
+    year = int(now[:4])
   date = f'{year}-{month}-{now[8:]}'
   return date
 
@@ -61,9 +60,9 @@ def timeframe(url: str, header):
 
   payload = {}
   response = request("GET", url, headers = header, data = payload)
-  return (response.text, day)
+  return (response.text, day, source + currencies)
 
-def get_rates(file: str):
+def get_rates(file: str, code: str):
   dataFrame = read_json(file)
   dataFrame = dataFrame.iloc[:, [-1]]
   rate = list(map(lambda x: x[0]['USDINR'], dataFrame.values))
@@ -72,8 +71,8 @@ def get_rates(file: str):
   dataFrame.insert(1, "dates", [_ for _ in range(len(dataFrame))])
   return dataFrame
 
-def predict(file: str, day: int):
-  dataFrame = get_rates(file)
+def predict(file: str, day: int, code: str):
+  dataFrame = get_rates(file, code)
   #model.plot_data(dataFrame)
   X_train, X_test, y_train, y_test, poly = model.preprocess(dataFrame)
   ml_model = model.training(X_train, X_test, y_train, y_test)
