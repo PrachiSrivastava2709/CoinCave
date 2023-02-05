@@ -11,7 +11,7 @@ elif action == 3:
     print(call.live(url, header))
 else:
     fileObject = open("extractTrial.json", "w")
-    content, day = call.timeframe(url, header)
+    content, day, code = call.timeframe(url, header)
     fileObject.write(content)
     fileObject.close()
-    print(call.predict("extractTrial.json", day))
+    print(call.predict("extractTrial.json", day, code))
